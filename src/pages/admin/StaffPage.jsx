@@ -68,8 +68,8 @@ export default function StaffPage() {
       setFormError("Name is required.");
       return;
     }
-    if (!form.pin || !/^\d{4}$/.test(form.pin)) {
-      setFormError("PIN must be exactly 4 digits.");
+    if (!form.pin || !/^\d{4,6}$/.test(form.pin)) {
+      setFormError("PIN must be 4 to 6 digits.");
       return;
     }
     setSaving(true);
@@ -119,7 +119,7 @@ export default function StaffPage() {
       <PageHeader
         eyebrow="Team"
         title="Staff"
-        subtitle="Everyone who can act as Admin, Agent, or Front Desk. Each person needs a 4-digit PIN to sign in."
+        subtitle="Everyone who can act as Admin, Agent, or Front Desk. Each person needs a 4–6 digit PIN to sign in."
         action={
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={() => setShowPins((v) => !v)} title="Show or hide PINs">
@@ -215,14 +215,14 @@ export default function StaffPage() {
               <option value="frontdesk">Front Desk</option>
             </Select>
           </Field>
-          <Field label="4-digit PIN" required hint="Staff will enter this PIN at sign-in. You can change it later if they lose it.">
+          <Field label="PIN (4–6 digits)" required hint="Staff will enter this PIN at sign-in. You can change it later if they lose it.">
             <Input
               inputMode="numeric"
-              maxLength={4}
-              pattern="\d{4}"
-              placeholder="e.g. 4821"
+              maxLength={6}
+              pattern="\d{4,6}"
+              placeholder="e.g. 482191"
               value={form.pin}
-              onChange={(e) => setForm({ ...form, pin: e.target.value.replace(/\D/g, "").slice(0, 4) })}
+              onChange={(e) => setForm({ ...form, pin: e.target.value.replace(/\D/g, "").slice(0, 6) })}
             />
           </Field>
           <div className="grid grid-cols-2 gap-4">
