@@ -64,8 +64,8 @@ export default function RoleGate() {
       setError("Select or enter your name.");
       return;
     }
-    if (!/^\d{4}$/.test(pin)) {
-      setError("Enter your 4-digit PIN.");
+    if (!/^\d{4,6}$/.test(pin)) {
+      setError("Enter your 4–6 digit PIN.");
       return;
     }
 
@@ -197,22 +197,22 @@ export default function RoleGate() {
                 {(selectedStaff || name.trim()) && (
                   <form onSubmit={submitPin} className="space-y-3">
                     <p className="text-xs text-ink-muted">
-                      Enter the 4-digit PIN for <span className="font-medium text-ink">{selectedStaff?.name || name}</span>
+                      Enter your PIN for <span className="font-medium text-ink">{selectedStaff?.name || name}</span>
                     </p>
                     <div className="relative">
                       <KeyRound size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
                       <input
                         inputMode="numeric"
-                        maxLength={4}
+                        maxLength={6}
                         autoFocus
                         value={pin}
-                        onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                        onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
                         placeholder="••••"
                         className="w-full rounded-lg border border-border bg-surface-raised py-2.5 pl-10 pr-3 text-center font-mono text-lg tracking-[0.4em] text-ink outline-none focus:border-signal/60 focus:ring-1 focus:ring-signal/30"
                       />
                     </div>
                     {error && <p className="text-xs text-rose">{error}</p>}
-                    <Button type="submit" className="w-full" disabled={verifying || pin.length !== 4}>
+                    <Button type="submit" className="w-full" disabled={verifying || pin.length < 4}>
                       {verifying ? "Checking…" : "Enter"}
                     </Button>
                   </form>
