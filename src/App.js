@@ -30,7 +30,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public: no role gate — any tenant can open /pay */}
+        {/* Public — no login */}
         <Route path="/pay" element={<PayRentPage />} />
 
         <Route path="/" element={<RoleGate />} />
