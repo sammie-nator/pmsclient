@@ -17,7 +17,7 @@ export default function PayRentPage() {
   const [amount, setAmount] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [paymentId, setPaymentId] = useState(null);
-  const [status, setStatus] = useState(null); // pending | success | failed | cancelled
+  const [status, setStatus] = useState(null);
   const [statusMsg, setStatusMsg] = useState("");
 
   useEffect(() => {
@@ -47,9 +47,10 @@ export default function PayRentPage() {
     }
   }, [selectedUnit]);
 
-  // Poll payment status after STK
   useEffect(() => {
-    if (!paymentId || status === "success" || status === "failed" || status === "cancelled") return;
+    if (!paymentId || status === "success" || status === "failed" || status === "cancelled") {
+      return;
+    }
     let cancelled = false;
     const tick = async () => {
       try {
@@ -145,7 +146,9 @@ export default function PayRentPage() {
           ) : (
             <form onSubmit={handlePay} className="space-y-4">
               {error && (
-                <p className="rounded-lg border border-rose/30 bg-rose/10 px-3 py-2 text-xs text-rose">{error}</p>
+                <p className="rounded-lg border border-rose/30 bg-rose/10 px-3 py-2 text-xs text-rose">
+                  {error}
+                </p>
               )}
 
               <Field label="House / building" required>
@@ -176,7 +179,9 @@ export default function PayRentPage() {
                   {unitsInBuilding.map((u) => (
                     <option key={u._id} value={u._id}>
                       {(u.unitCode || u.name) +
-                        (u.monthlyRent != null ? ` — KES ${Number(u.monthlyRent).toLocaleString()}` : "")}
+                        (u.monthlyRent != null
+                          ? ` — KES ${Number(u.monthlyRent).toLocaleString()}`
+                          : "")}
                     </option>
                   ))}
                 </Select>
@@ -194,7 +199,10 @@ export default function PayRentPage() {
 
               <Field label="M-Pesa phone number" required hint="e.g. 07XXXXXXXX">
                 <div className="relative">
-                  <Smartphone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
+                  <Smartphone
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint"
+                  />
                   <Input
                     className="pl-10"
                     inputMode="tel"
@@ -209,7 +217,9 @@ export default function PayRentPage() {
               {paymentId && status === "pending" && (
                 <div className="flex items-start gap-2 rounded-lg border border-signal/30 bg-signal/10 px-3 py-2 text-xs text-ink">
                   <Loader2 size={14} className="mt-0.5 animate-spin shrink-0" />
-                  <span>{statusMsg || "Waiting for you to complete the prompt on your phone…"}</span>
+                  <span>
+                    {statusMsg || "Waiting for you to complete the prompt on your phone…"}
+                  </span>
                 </div>
               )}
 
@@ -223,7 +233,11 @@ export default function PayRentPage() {
               )}
 
               {!paymentId && (
-                <Button type="submit" className="w-full" disabled={submitting || !propertyId || !phone}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={submitting || !propertyId || !phone}
+                >
                   {submitting ? "Sending STK…" : "Pay with M-Pesa"}
                 </Button>
               )}
