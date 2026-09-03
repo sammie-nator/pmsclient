@@ -26,7 +26,6 @@ import AgentDashboard from "./pages/agent/AgentDashboard";
 import FrontDeskLayout from "./pages/frontdesk/FrontDeskLayout";
 import FrontDeskDashboard from "./pages/frontdesk/FrontDeskDashboard";
 
-import PayRentPage from "./pages/PayRentPage";
 import PaySuccessPage from "./pages/PaySuccessPage";
 import PayFailedPage from "./pages/PayFailedPage";
 import RentPaymentsPage from "./pages/admin/RentPaymentsPage";
