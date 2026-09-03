@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { Building2, Smartphone, CheckCircle2, Loader2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Building2, Smartphone, Loader2 } from "lucide-react";
 import api from "../lib/api";
 import Button from "../components/Button";
 import { Field, Input, Select } from "../components/FormField";
 
 export default function PayRentPage() {
+  const navigate = useNavigate();
   const [buildings, setBuildings] = useState([]);
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,9 +43,7 @@ export default function PayRentPage() {
   );
 
   useEffect(() => {
-    if (selectedUnit) {
-      setAmount(String(selectedUnit.monthlyRent ?? ""));
-    }
+    if (selectedUnit) setAmount(String(selectedUnit.monthlyRent ?? ""));
   }, [selectedUnit]);
 
   useEffect(() => {
@@ -56,18 +55,22 @@ export default function PayRentPage() {
       try {
         const res = await api.get(`/public/mpesa/status/${paymentId}`);
         if (cancelled) return;
-        setStatus(res.data.status);
-        if (res.data.status === "success") {
-          setStatusMsg(
-            res.data.mpesaReceipt
-              ? `Paid. M-Pesa receipt: ${res.data.mpesaReceipt}`
-              : "Payment successful."
-          );
-        } else if (res.data.status === "failed" || res.data.status === "cancelled") {
-          setStatusMsg(res.data.resultDesc || "Payment was not completed.");
+        const st = res.data.status;
+        setStatus(st);
+        if (st === "success") {
+          const q = new URLSearchParams({
+            amount: String(res.data.amount || ""),
+            receipt: res.data.mpesaReceipt || "",
+          });
+          navigate(`/pay/success?${q.toString()}`);
+        } else if (st === "failed" || st === "cancelled") {
+          const q = new URLSearchParams({
+            reason: res.data.resultDesc || "Payment was not completed.",
+          });
+          navigate(`/pay/failed?${q.toString()}`);
         }
       } catch {
-        // ignore transient errors
+        // ignore
       }
     };
     tick();
@@ -76,7 +79,7 @@ export default function PayRentPage() {
       cancelled = true;
       clearInterval(id);
     };
-  }, [paymentId, status]);
+  }, [paymentId, status, navigate]);
 
   async function handlePay(e) {
     e.preventDefault();
@@ -109,13 +112,6 @@ export default function PayRentPage() {
     }
   }
 
-  function reset() {
-    setPaymentId(null);
-    setStatus(null);
-    setStatusMsg("");
-    setError("");
-  }
-
   return (
     <div className="min-h-screen bg-base bg-grid flex items-center justify-center px-4 py-10 relative overflow-hidden">
       <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-signal/10 blur-[120px]" />
@@ -134,15 +130,6 @@ export default function PayRentPage() {
         <div className="rounded-2xl border border-border bg-surface p-5 shadow-panel">
           {loading ? (
             <p className="text-sm text-ink-faint">Loading houses…</p>
-          ) : status === "success" ? (
-            <div className="text-center py-4 space-y-3">
-              <CheckCircle2 className="mx-auto text-emerald-500" size={40} />
-              <p className="font-display font-semibold text-ink">Payment received</p>
-              <p className="text-sm text-ink-muted">{statusMsg}</p>
-              <Button variant="outline" onClick={reset} className="mt-2">
-                Pay another
-              </Button>
-            </div>
           ) : (
             <form onSubmit={handlePay} className="space-y-4">
               {error && (
@@ -187,7 +174,7 @@ export default function PayRentPage() {
                 </Select>
               </Field>
 
-              <Field label="Amount (KES)" hint="Defaults to monthly rent; you can change it.">
+              <Field label="Amount (KES)" hint="Defaults to monthly rent.">
                 <Input
                   type="number"
                   min="1"
@@ -221,15 +208,6 @@ export default function PayRentPage() {
                     {statusMsg || "Waiting for you to complete the prompt on your phone…"}
                   </span>
                 </div>
-              )}
-
-              {(status === "failed" || status === "cancelled") && (
-                <p className="rounded-lg border border-rose/30 bg-rose/10 px-3 py-2 text-xs text-rose">
-                  {statusMsg || "Payment failed."}{" "}
-                  <button type="button" className="underline" onClick={reset}>
-                    Try again
-                  </button>
-                </p>
               )}
 
               {!paymentId && (
