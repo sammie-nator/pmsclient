@@ -26,6 +26,11 @@ import AgentDashboard from "./pages/agent/AgentDashboard";
 import FrontDeskLayout from "./pages/frontdesk/FrontDeskLayout";
 import FrontDeskDashboard from "./pages/frontdesk/FrontDeskDashboard";
 
+import PayRentPage from "./pages/PayRentPage";
+import PaySuccessPage from "./pages/PaySuccessPage";
+import PayFailedPage from "./pages/PayFailedPage";
+import RentPaymentsPage from "./pages/admin/RentPaymentsPage";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -56,6 +61,7 @@ export default function App() {
           <Route path="field-updates" element={<FieldUpdatesPage />} />
           <Route path="staff" element={<StaffPage />} />
           <Route path="audit" element={<AuditPage />} />
+          <Route path="payments" element={<RentPaymentsPage />} />
         </Route>
 
         <Route
@@ -89,6 +95,10 @@ export default function App() {
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
+
+          <Route path="/pay" element={<PayRentPage />} />
+<Route path="/pay/success" element={<PaySuccessPage />} />
+<Route path="/pay/failed" element={<PayFailedPage />} />
       </Routes>
     </BrowserRouter>
   );
