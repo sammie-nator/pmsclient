@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { LayoutDashboard, Building2, Users, Receipt, Wrench, UserCog, ShieldCheck, Wallet, TrendingUp, BarChart3, NotebookPen, PieChart } from "lucide-react";
+import { LayoutDashboard, Building2, Users, Receipt, Wrench, UserCog, ShieldCheck, Wallet, TrendingUp, BarChart3, NotebookPen, PieChart,Banknote } from "lucide-react";
 import Shell from "../../components/Shell";
 
 const NAV = [
@@ -8,6 +8,7 @@ const NAV = [
   { to: "/admin/balances", label: "Balances", icon: Wallet },
   { to: "/admin/tenants", label: "Tenants", icon: Users },
   { to: "/admin/billing", label: "Billing", icon: Receipt },
+  { to: "/admin/payments", label: "Payments", icon: Banknote },
   { to: "/admin/maintenance", label: "Maintenance", icon: Wrench },
   { to: "/admin/expenses", label: "Expenses", icon: TrendingUp },
   { to: "/admin/sales-reports", label: "Sales reports", icon: BarChart3 },
