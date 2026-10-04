@@ -11,7 +11,7 @@ import ConfirmDialog from "../../components/ConfirmDialog";
 import EmptyState from "../../components/EmptyState";
 import { Field, Input, Select } from "../../components/FormField";
 
-const EMPTY_FORM = { name: "", role: "agent", phone: "", email: "", assignedAreas: "" };
+const EMPTY_FORM = { name: "", role: "agent", phone: "", email: "", assignedAreas: "", pin: "" };
 const ROLE_LABEL = { admin: "Admin", agent: "Agent", frontdesk: "Front Desk" };
 
 export default function StaffPage() {
@@ -47,7 +47,14 @@ export default function StaffPage() {
 
   function openEdit(s) {
     setEditing(s);
-    setForm({ name: s.name, role: s.role, phone: s.phone || "", email: s.email || "", assignedAreas: (s.assignedAreas || []).join(", ") });
+    setForm({
+      name: s.name,
+      role: s.role,
+      phone: s.phone || "",
+      email: s.email || "",
+      assignedAreas: (s.assignedAreas || []).join(", "),
+      pin: "", // leave blank to keep existing PIN
+    });
     setFormError("");
     setFormOpen(true);
   }
@@ -59,11 +66,26 @@ export default function StaffPage() {
       setFormError("Name is required.");
       return;
     }
+    // PIN required when creating; optional when editing (blank = leave unchanged)
+    if (!editing) {
+      if (!/^\d{6}$/.test(form.pin)) {
+        setFormError("A 6-digit PIN is required for new staff.");
+        return;
+      }
+    } else if (form.pin && !/^\d{6}$/.test(form.pin)) {
+      setFormError("PIN must be exactly 6 digits, or leave blank to keep the current one.");
+      return;
+    }
     setSaving(true);
     const payload = {
-      ...form,
+      name: form.name,
+      role: form.role,
+      phone: form.phone,
+      email: form.email,
       assignedAreas: form.assignedAreas.split(",").map((a) => a.trim()).filter(Boolean),
     };
+    // Only send pin when the admin actually entered one
+    if (form.pin) payload.pin = form.pin;
     try {
       if (editing) {
         const res = await api.patch(`/staff/${editing._id}`, payload);
@@ -172,6 +194,25 @@ export default function StaffPage() {
               <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             </Field>
           </div>
+          <Field
+            label="PIN / password"
+            required={!editing}
+            hint={editing ? "Leave blank to keep the current PIN. Enter 6 digits to change it." : "Exactly 6 digits. Staff will use this at sign-in."}
+          >
+            <Input
+              type="password"
+              inputMode="numeric"
+              autoComplete="new-password"
+              maxLength={6}
+              pattern="\d{6}"
+              placeholder={editing ? "••••••" : "e.g. 482915"}
+              value={form.pin}
+              onChange={(e) => {
+                const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
+                setForm({ ...form, pin: digits });
+              }}
+            />
+          </Field>
           {form.role === "agent" && (
             <Field label="Assigned areas" hint="Comma-separated, e.g. Kilimani, Lavington">
               <Input value={form.assignedAreas} onChange={(e) => setForm({ ...form, assignedAreas: e.target.value })} />
