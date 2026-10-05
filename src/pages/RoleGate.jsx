@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ShieldCheck, MapPinned, ClipboardList, Building2, ChevronRight } from "lucide-react";
+import { ShieldCheck, MapPinned, ClipboardList, Building2, ChevronRight, Smartphone } from "lucide-react";
 import api from "../lib/api";
 import { useActor } from "../context/ActorContext";
 import Button from "../components/Button";
@@ -145,7 +145,7 @@ export default function RoleGate() {
               }}
               className="space-y-3"
             >
-             <div>
+              <div>
                 <label htmlFor="login-name" className="mb-1.5 block text-xs font-medium text-ink-muted">
                   Your name
                 </label>
@@ -174,7 +174,7 @@ export default function RoleGate() {
                   className="w-full rounded-lg border border-border bg-surface-raised px-3 py-2.5 text-sm text-ink placeholder:text-ink-faint outline-none focus:border-signal/60 focus:ring-1 focus:ring-signal/30"
                 />
               </div>
-             
+
               <Button type="submit" disabled={!name.trim()} className="w-full">
                 Enter
               </Button>
@@ -185,6 +185,16 @@ export default function RoleGate() {
         <p className="mt-6 text-center text-[11px] text-ink-faint px-2">
           Your name identifies who is making changes in the activity log.
         </p>
+
+        <div className="mt-4 text-center">
+          <Link
+            to="/pay"
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface/80 px-4 py-2.5 text-sm text-ink-muted transition-colors hover:border-signal/40 hover:text-signal"
+          >
+            <Smartphone size={15} />
+            Tenant? Pay rent with M-Pesa
+          </Link>
+        </div>
       </div>
     </div>
   );
