@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import RoleGate from "./pages/RoleGate";
+import TenantPayPage from "./pages/TenantPayPage";
 import RequireRole from "./components/RequireRole";
 
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -30,6 +31,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<RoleGate />} />
+        <Route path="/pay" element={<TenantPayPage />} />
 
         <Route
           path="/admin"
